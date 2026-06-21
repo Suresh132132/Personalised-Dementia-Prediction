@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    /* ── ADMIN LOGIN PAGE ───────────────────────── */
+    .admin-login-section {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-image: url('https://medicaldialogues.in/h-upload/2020/03/13/125443-dementia.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding: 60px 20px;
+    }
+
+    /* Deeper, darker overlay for admin — distinguishes it from user login */
+    .admin-login-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            135deg,
+            rgba(4, 58, 52, 0.90) 0%,
+            rgba(6, 90, 80, 0.80) 50%,
+            rgba(2, 44, 40, 0.90) 100%
+        );
+        z-index: 1;
+    }
+
+    /* Decorative rings */
+    .admin-deco-1 {
+        position: absolute;
+        width: 480px; height: 480px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(0,201,177,0.12);
+        top: -130px; right: -130px;
+        z-index: 1; pointer-events: none;
+    }
+    .admin-deco-2 {
+        position: absolute;
+        width: 300px; height: 300px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.06);
+        bottom: -80px; left: -80px;
+        z-index: 1; pointer-events: none;
+    }
+    /* Extra inner ring for depth */
+    .admin-deco-3 {
+        position: absolute;
+        width: 200px; height: 200px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,201,177,0.08);
+        top: 40px; left: 60px;
+        z-index: 1; pointer-events: none;
+    }
+
+    /* ── WRAPPER ────────────────────────────────── */
+    .admin-login-wrapper {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 420px;
+        animation: fadeSlideUp 0.65s ease both;
+    }
+
+    /* ── ADMIN BADGE above card ─────────────────── */
+    .admin-top-badge {
+        text-align: center;
+        margin-bottom: 18px;
+    }
+    .admin-top-badge span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0,201,177,0.18);
+        border: 1px solid rgba(0,201,177,0.35);
+        color: #A8F0E8;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 6px 18px;
+        border-radius: 20px;
+        backdrop-filter: blur(6px);
+    }
+    .admin-top-badge span i { font-size: 0.7rem; }
+
+    /* ── CARD ───────────────────────────────────── */
+    .admin-card {
+        background: rgba(255,255,255,0.97);
+        border-radius: 20px;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,201,177,0.12);
+        overflow: hidden;
+    }
+
+    /* Accent bar — slightly darker shade to signal admin context */
+    .admin-card-accent {
+        height: 5px;
+        background: linear-gradient(90deg, #043A34, #065A50, #0A7C6E, #00C9B1);
+    }
+
+    .admin-card-body {
+        padding: 38px 36px 36px;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    .admin-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .admin-icon {
+        width: 62px; height: 62px;
+        background: linear-gradient(135deg, #043A34, #0A7C6E);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        box-shadow: 0 6px 20px rgba(4,58,52,0.35);
+        position: relative;
+    }
+    .admin-icon i { color: white; font-size: 1.4rem; }
+    /* Shield badge on icon */
+    .admin-icon::after {
+        content: '\f3ed'; /* fa-shield-alt */
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        bottom: -6px; right: -6px;
+        width: 22px; height: 22px;
+        background: #00C9B1;
+        color: white;
+        font-size: 0.6rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+        line-height: 18px;
+        text-align: center;
+    }
+
+    .admin-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #043A34;
+        margin-bottom: 6px;
+        line-height: 1.2;
+    }
+    .admin-header p {
+        font-size: 0.85rem;
+        color: #7FA9A4;
+        margin: 0;
+    }
+
+    /* Admin restricted notice */
+    .admin-notice {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: #E0F7F5;
+        border: 1px solid #C5E8E4;
+        border-left: 3px solid #0A7C6E;
+        border-radius: 9px;
+        padding: 9px 13px;
+        font-size: 0.8rem;
+        color: #065A50;
+        font-weight: 500;
+        margin-bottom: 22px;
+    }
+    .admin-notice i { color: #0A7C6E; flex-shrink: 0; }
+
+    /* ── FORM FIELDS ────────────────────────────── */
+    .field-group { margin-bottom: 18px; }
+
+    .field-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #3A5C58;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 7px;
+        display: block;
+    }
+
+    .field-wrap { position: relative; }
+    .field-wrap .field-icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0A7C6E;
+        font-size: 0.88rem;
+        pointer-events: none;
+    }
+    .field-wrap input {
+        width: 100%;
+        padding: 12px 13px 12px 40px;
+        border: 1.5px solid #C5E8E4;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.92rem;
+        color: #0D2B27;
+        background: #F4FAFA;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        outline: none;
+    }
+    .field-wrap input::placeholder { color: #A8C5C2; }
+    .field-wrap input:focus {
+        border-color: #065A50;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(4,58,52,0.10);
+    }
+
+    /* ── BUTTONS ────────────────────────────────── */
+    .admin-login-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+    .btn-admin {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.92rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        transition: all 0.25s;
+    }
+    .btn-admin-primary {
+        background: linear-gradient(135deg, #043A34, #0A7C6E);
+        color: white;
+        box-shadow: 0 4px 14px rgba(4,58,52,0.30);
+    }
+    .btn-admin-primary:hover {
+        background: linear-gradient(135deg, #022820, #065A50);
+        box-shadow: 0 6px 22px rgba(4,58,52,0.42);
+        transform: translateY(-1px);
+        color: white;
+    }
+    .btn-admin-reset {
+        background: #E0F7F5;
+        color: #065A50;
+        border: 1.5px solid #C5E8E4;
+    }
+    .btn-admin-reset:hover {
+        background: #C5E8E4;
+        color: #043A34;
+        transform: translateY(-1px);
+    }
+
+    /* ── MESSAGES ───────────────────────────────── */
+    .admin-message {
+        margin-top: 16px;
+        padding: 10px 14px;
+        border-radius: 9px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #E0F7F5;
+        color: #065A50;
+        border: 1px solid #C5E8E4;
+    }
+    .admin-message.error {
+        background: #FFF0EE;
+        color: #C0392B;
+        border-color: #FADADD;
+    }
+
+    /* ── BOTTOM BADGE ───────────────────────────── */
+    .admin-bottom-badge {
+        text-align: center;
+        margin-top: 22px;
+    }
+    .admin-bottom-badge span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255,255,255,0.13);
+        border: 1px solid rgba(255,255,255,0.22);
+        color: white;
+        font-size: 0.74rem;
+        font-weight: 500;
+        padding: 6px 16px;
+        border-radius: 20px;
+        backdrop-filter: blur(6px);
+    }
+    .admin-bottom-badge span i { color: #00C9B1; }
+
+    /* ── ANIMATION ──────────────────────────────── */
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(28px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 480px) {
+        .admin-card-body { padding: 28px 22px 28px; }
+        .admin-header h2 { font-size: 1.35rem; }
+        .admin-login-actions { flex-direction: column; }
+    }
+</style>
+{% endblock %}
+
+{% block contents %}
+<section class="admin-login-section">
+    <div class="admin-deco-1"></div>
+    <div class="admin-deco-2"></div>
+    <div class="admin-deco-3"></div>
+
+    <div class="admin-login-wrapper">
+
+        <!-- Top badge -->
+        <div class="admin-top-badge">
+            <span>
+                <i class="fas fa-user-shield"></i>
+                Administrator Access Only
+            </span>
+        </div>
+
+        <!-- Card -->
+        <div class="admin-card">
+            <div class="admin-card-accent"></div>
+            <div class="admin-card-body">
+
+                <!-- Header -->
+                <div class="admin-header">
+                    <div class="admin-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h2>Admin Portal</h2>
+                    <p>Sign in with your administrator credentials</p>
+                </div>
+
+                <!-- Restricted notice -->
+                <div class="admin-notice">
+                    <i class="fas fa-info-circle"></i>
+                    This area is restricted to authorised administrators only.
+                </div>
+
+                <!-- Form — action, method, field names all unchanged -->
+                <form action="{% url 'AdminLoginCheck' %}" method="POST">
+                    {% csrf_token %}
+
+                    <div class="field-group">
+                        <label class="field-label" for="admin_loginid">Admin Login ID</label>
+                        <div class="field-wrap">
+                            <i class="fas fa-user-tie field-icon"></i>
+                            <input
+                                type="text"
+                                id="admin_loginid"
+                                name="loginid"
+                                required
+                                placeholder="Enter Admin Login ID"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="admin_pswd">Password</label>
+                        <div class="field-wrap">
+                            <i class="fas fa-lock field-icon"></i>
+                            <input
+                                type="password"
+                                id="admin_pswd"
+                                name="pswd"
+                                required
+                                placeholder="Enter Admin Password"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="admin-message {% if 'error' in message.tags or 'invalid' in message|lower %}error{% endif %}">
+                                <i class="fas {% if 'error' in message.tags %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Buttons -->
+                    <div class="admin-login-actions">
+                        <button class="btn-admin btn-admin-primary" type="submit">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <button class="btn-admin btn-admin-reset" type="reset">
+                            <i class="fas fa-redo-alt"></i> Reset
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Bottom badge -->
+        <div class="admin-bottom-badge">
+            <span>
+                <i class="fas fa-shield-alt"></i>
+                DementiaPredict<strong>ML</strong> &nbsp;|&nbsp; Admin Control Panel
+            </span>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

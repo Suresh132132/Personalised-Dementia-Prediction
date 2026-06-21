@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    /* ── REGISTER PAGE ──────────────────────────── */
+    .register-section {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-image: url('https://medicaldialogues.in/h-upload/2020/03/13/125443-dementia.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding: 60px 20px;
+    }
+
+    /* Teal overlay */
+    .register-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            135deg,
+            rgba(6, 90, 80, 0.84) 0%,
+            rgba(10, 124, 110, 0.72) 50%,
+            rgba(0, 80, 72, 0.82) 100%
+        );
+        z-index: 1;
+    }
+
+    /* Decorative rings */
+    .reg-deco-1 {
+        position: absolute;
+        width: 520px; height: 520px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(0,201,177,0.13);
+        top: -140px; right: -140px;
+        z-index: 1; pointer-events: none;
+    }
+    .reg-deco-2 {
+        position: absolute;
+        width: 340px; height: 340px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.06);
+        bottom: -90px; left: -90px;
+        z-index: 1; pointer-events: none;
+    }
+
+    /* ── CARD ───────────────────────────────────── */
+    .register-wrapper {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 720px;
+        animation: fadeSlideUp 0.65s ease both;
+    }
+
+    .register-card {
+        background: rgba(255,255,255,0.97);
+        border-radius: 20px;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,201,177,0.13);
+        overflow: hidden;
+    }
+
+    .register-card-accent {
+        height: 5px;
+        background: linear-gradient(90deg, #065A50, #0A7C6E, #00C9B1);
+    }
+
+    .register-card-body {
+        padding: 38px 40px 36px;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    .register-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .register-icon {
+        width: 60px; height: 60px;
+        background: linear-gradient(135deg, #0A7C6E, #00C9B1);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        box-shadow: 0 6px 20px rgba(10,124,110,0.28);
+    }
+    .register-icon i { color: white; font-size: 1.4rem; }
+
+    .register-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #065A50;
+        margin-bottom: 6px;
+        line-height: 1.2;
+    }
+    .register-header p {
+        font-size: 0.85rem;
+        color: #7FA9A4;
+        margin: 0;
+    }
+
+    /* ── SECTION DIVIDER ────────────────────────── */
+    .form-section-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #0A7C6E;
+        background: #E0F7F5;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 16px;
+        margin-top: 8px;
+    }
+
+    /* ── FORM FIELDS ────────────────────────────── */
+    .field-group { margin-bottom: 16px; }
+
+    .field-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #3A5C58;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 7px;
+        display: block;
+    }
+
+    .field-wrap { position: relative; }
+    .field-wrap .field-icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0A7C6E;
+        font-size: 0.85rem;
+        pointer-events: none;
+    }
+    /* For textarea icon — align to top */
+    .field-wrap.textarea-wrap .field-icon {
+        top: 14px;
+        transform: none;
+    }
+
+    .field-wrap input,
+    .field-wrap textarea {
+        width: 100%;
+        padding: 11px 13px 11px 38px;
+        border: 1.5px solid #C5E8E4;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        color: #0D2B27;
+        background: #F4FAFA;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        outline: none;
+        resize: none;
+    }
+    .field-wrap textarea { line-height: 1.6; }
+    .field-wrap input::placeholder,
+    .field-wrap textarea::placeholder { color: #A8C5C2; }
+    .field-wrap input:focus,
+    .field-wrap textarea:focus {
+        border-color: #0A7C6E;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(10,124,110,0.10);
+    }
+
+    /* ── BUTTONS ────────────────────────────────── */
+    .register-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 26px;
+        justify-content: center;
+    }
+    .btn-reg {
+        padding: 12px 36px;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.92rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: all 0.25s;
+    }
+    .btn-reg-primary {
+        background: linear-gradient(135deg, #0A7C6E, #00C9B1);
+        color: white;
+        box-shadow: 0 4px 14px rgba(10,124,110,0.28);
+    }
+    .btn-reg-primary:hover {
+        background: linear-gradient(135deg, #065A50, #0A7C6E);
+        box-shadow: 0 6px 20px rgba(10,124,110,0.38);
+        transform: translateY(-1px);
+        color: white;
+    }
+
+    /* ── MESSAGES ───────────────────────────────── */
+    .reg-message {
+        margin-top: 16px;
+        padding: 10px 14px;
+        border-radius: 9px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        background: #FFF0EE;
+        color: #C0392B;
+        border: 1px solid #FADADD;
+    }
+    .reg-message i { margin-top: 2px; flex-shrink: 0; }
+
+    /* ── LOGIN LINK ─────────────────────────────── */
+    .login-prompt {
+        text-align: center;
+        font-size: 0.85rem;
+        color: #3A5C58;
+        margin-top: 20px;
+    }
+    .login-prompt a {
+        color: #0A7C6E;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .login-prompt a:hover { color: #065A50; text-decoration: underline; }
+
+    /* ── BADGE ──────────────────────────────────── */
+    .reg-badge {
+        text-align: center;
+        margin-top: 22px;
+    }
+    .reg-badge span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.25);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 6px 16px;
+        border-radius: 20px;
+        backdrop-filter: blur(6px);
+    }
+    .reg-badge span i { color: #00C9B1; }
+
+    /* Thin rule between sections */
+    .form-rule {
+        border: none;
+        border-top: 1px solid #E0F7F5;
+        margin: 20px 0 18px;
+    }
+
+    /* ── ANIMATION ──────────────────────────────── */
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(28px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 600px) {
+        .register-card-body { padding: 26px 20px 28px; }
+        .register-header h2 { font-size: 1.3rem; }
+        .btn-reg { padding: 12px 24px; width: 100%; justify-content: center; }
+        .register-actions { flex-direction: column; }
+    }
+</style>
+{% endblock %}
+
+{% block contents %}
+<section class="register-section">
+    <div class="reg-deco-1"></div>
+    <div class="reg-deco-2"></div>
+
+    <div class="register-wrapper">
+
+        <!-- Card -->
+        <div class="register-card">
+            <div class="register-card-accent"></div>
+            <div class="register-card-body">
+
+                <!-- Header -->
+                <div class="register-header">
+                    <div class="register-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2>Create Your Account</h2>
+                    <p>Register to access personalised dementia prediction</p>
+                </div>
+
+                <!-- Form — action, method, all field names unchanged -->
+                <form method="POST" action="{% url 'UserRegisterActions' %}">
+                    {% csrf_token %}
+
+                    <!-- Section: Account Info -->
+                    <div class="form-section-title">
+                        <i class="fas fa-lock"></i> Account Information
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">Full Name</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-user field-icon"></i>
+                                    <input type="text" name="name" placeholder="Enter your full name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">Login ID (Username)</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-id-badge field-icon"></i>
+                                    <input type="text" name="loginid" placeholder="Choose a unique username" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">Password</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-lock field-icon"></i>
+                                    <input type="password" name="password" placeholder="Min 8 chars, 1 capital, 1 number, 1 symbol" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">Mobile Number</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-phone field-icon"></i>
+                                    <input type="text" name="mobile" placeholder="10-digit mobile number" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="field-group">
+                                <label class="field-label">Email Address</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-envelope field-icon"></i>
+                                    <input type="email" name="email" placeholder="example@gmail.com" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="form-rule">
+
+                    <!-- Section: Address Info -->
+                    <div class="form-section-title">
+                        <i class="fas fa-map-marker-alt"></i> Address Details
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">Locality</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-map-pin field-icon"></i>
+                                    <input type="text" name="locality" placeholder="Your area / locality" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">City</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-city field-icon"></i>
+                                    <input type="text" name="city" placeholder="City name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">State</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-flag field-icon"></i>
+                                    <input type="text" name="state" placeholder="State name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">Full Address</label>
+                                <div class="field-wrap textarea-wrap">
+                                    <i class="fas fa-home field-icon"></i>
+                                    <textarea name="address" rows="3" placeholder="Door no., street, area..." required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="reg-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Submit -->
+                    <div class="register-actions">
+                        <button type="submit" class="btn-reg btn-reg-primary">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Login prompt -->
+                <div class="login-prompt">
+                    Already have an account?
+                    <a href="{% url 'UserLogin' %}">Sign in here &rarr;</a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Floating badge -->
+        <div class="reg-badge">
+            <span>
+                <i class="fas fa-shield-alt"></i>
+                Secured by DementiaPredict<strong>ML</strong> &nbsp;|&nbsp; OASIS-2 Dataset
+            </span>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

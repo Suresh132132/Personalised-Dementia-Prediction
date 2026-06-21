@@ -1,0 +1,443 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel | Personalised Dementia Prediction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary:        #0A7C6E;
+            --primary-light:  #13A899;
+            --primary-dark:   #065A50;
+            --admin-dark:     #043A34;
+            --accent:         #00C9B1;
+            --accent-soft:    #E0F7F5;
+            --white:          #FFFFFF;
+            --off-white:      #F4FAFA;
+            --text-dark:      #0D2B27;
+            --text-mid:       #3A5C58;
+            --text-light:     #7FA9A4;
+            --border:         #C5E8E4;
+            --sidebar-width:  240px;
+            --navbar-height:  64px;
+            --shadow:         0 4px 24px rgba(10,124,110,0.10);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--off-white);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOP BAR ──────────────────────────────── */
+        .admin-topbar {
+            background: var(--admin-dark);
+            color: var(--accent-soft);
+            font-size: 0.76rem;
+            letter-spacing: 0.04em;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        .admin-topbar .inner {
+            width: 100%;
+            padding: 0 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .admin-topbar span { opacity: 0.8; }
+        .admin-topbar .badge-admin {
+            background: var(--accent);
+            color: var(--admin-dark);
+            font-weight: 700;
+            font-size: 0.7rem;
+            border-radius: 20px;
+            padding: 2px 12px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* ── NAVBAR ───────────────────────────────── */
+        .admin-navbar {
+            background: var(--white);
+            border-bottom: 2px solid var(--border);
+            height: var(--navbar-height);
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.3s;
+        }
+        .admin-navbar.scrolled {
+            box-shadow: 0 6px 30px rgba(4,58,52,0.14);
+        }
+
+        .admin-brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            text-decoration: none;
+        }
+        .admin-brand-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--admin-dark), var(--primary));
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 12px rgba(4,58,52,0.28);
+            flex-shrink: 0;
+        }
+        .admin-brand-icon i { color: white; font-size: 1rem; }
+
+        .admin-brand-text .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--admin-dark);
+            display: block;
+            line-height: 1.2;
+        }
+        .admin-brand-text .brand-title span { color: var(--accent); }
+        .admin-brand-text .brand-sub {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* Nav links */
+        .admin-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+        }
+        .admin-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-mid);
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .admin-nav li a i { font-size: 0.8rem; }
+        .admin-nav li a:hover,
+        .admin-nav li a.active {
+            background: var(--accent-soft);
+            color: var(--primary);
+        }
+
+        /* Logout button */
+        .admin-nav li.logout-item a {
+            background: #FFF0EE;
+            color: #C0392B;
+            border: 1px solid #FADADD;
+        }
+        .admin-nav li.logout-item a:hover {
+            background: #FADADD;
+            color: #922B21;
+        }
+
+        /* Admin badge in nav */
+        .admin-role-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-soft);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 14px 5px 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-right: 6px;
+        }
+        .admin-role-badge .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            box-shadow: 0 0 0 3px rgba(0,201,177,0.2);
+        }
+
+        /* Mobile toggler */
+        .admin-toggler {
+            display: none;
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        /* ── HERO BANNER ──────────────────────────── */
+        .admin-hero {
+            background: linear-gradient(135deg, var(--admin-dark) 0%, var(--primary-dark) 50%, var(--primary) 100%);
+            padding: 38px 28px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .admin-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 80% 50%, rgba(0,201,177,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 10% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        .admin-hero-inner {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .admin-hero-left h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.3rem, 3vw, 1.9rem);
+            font-weight: 700;
+            margin-bottom: 6px;
+            line-height: 1.25;
+        }
+        .admin-hero-left p {
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.72);
+            max-width: 520px;
+            line-height: 1.65;
+        }
+        .admin-hero-right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 12px;
+            padding: 12px 18px;
+            text-align: center;
+            backdrop-filter: blur(6px);
+            min-width: 90px;
+        }
+        .hero-stat .val {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+        .hero-stat .lbl {
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 3px;
+        }
+
+        /* ── MAIN CONTENT ─────────────────────────── */
+        .admin-main {
+            flex: 1;
+            padding: 32px 28px;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* ── FOOTER ───────────────────────────────── */
+        .admin-footer {
+            background: var(--admin-dark);
+            color: rgba(255,255,255,0.45);
+            text-align: center;
+            padding: 14px 20px;
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+        }
+        .admin-footer span { color: var(--accent); font-weight: 600; }
+
+        /* ── MOBILE NAV ───────────────────────────── */
+        .admin-nav-collapse {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media (max-width: 900px) {
+            .admin-toggler { display: block; }
+            .admin-nav-collapse {
+                display: none;
+                position: absolute;
+                top: var(--navbar-height);
+                left: 0; right: 0;
+                background: white;
+                border-bottom: 2px solid var(--border);
+                padding: 12px 20px 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+                z-index: 999;
+            }
+            .admin-nav-collapse.open { display: flex; }
+            .admin-nav { flex-direction: column; width: 100%; }
+            .admin-nav li { width: 100%; }
+            .admin-nav li a { width: 100%; }
+            .admin-role-badge { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            .admin-hero { padding: 28px 18px; }
+            .admin-main { padding: 22px 16px; }
+            .admin-topbar .inner { padding: 0 16px; }
+            .admin-navbar { padding: 0 16px; }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Top Bar Removed -->
+
+    <!-- Navbar -->
+    <nav class="admin-navbar" id="adminNav">
+        <a class="admin-brand" href="{% url 'AdminHome' %}">
+            <div class="admin-brand-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div class="admin-brand-text">
+                <span class="brand-title">DementiaPredict<span>ML</span></span>
+                <span class="brand-sub">Admin Control Panel</span>
+            </div>
+        </a>
+
+        <button class="admin-toggler" id="adminToggler" onclick="toggleNav()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="admin-nav-collapse" id="adminNavCollapse">
+            <div class="admin-role-badge">
+                <div class="dot"></div>
+                Administrator
+            </div>
+            <ul class="admin-nav">
+                <li>
+                    <a href="{% url 'AdminHome' %}">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'RegisterUsersView' %}">
+                        <i class="fas fa-users"></i> User Details
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'AdminPrediction' %}">
+                        <i class="fas fa-brain"></i> Dementia Prediction
+                    </a>
+                </li>合
+                <li class="logout-item">
+                    <a href="{% url 'index' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <div class="admin-hero">
+        <div class="admin-hero-inner">
+            <div class="admin-hero-left">
+                <h1>Welcome to the Admin Dashboard</h1>
+                <p>Manage registered users, monitor dementia prediction results, and oversee ML model training for personalised care.</p>
+            </div>
+            <div class="admin-hero-right">
+                <div class="hero-stat">
+                    <div class="val">70%</div>
+                    <div class="lbl">Best Accuracy</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="val">1210</div>
+                    <div class="lbl">MRI Records</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="val">3</div>
+                    <div class="lbl">ML Models</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <main class="admin-main">
+        {% block contents %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="admin-footer">
+        &copy; 2025 DementiaPredict<span>ML</span> Admin Panel. All rights reserved.
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script>
+        // Sticky nav shadow
+        window.addEventListener('scroll', () => {
+            document.getElementById('adminNav').classList.toggle('scrolled', window.scrollY > 10);
+        });
+
+        // Mobile nav toggle
+        function toggleNav() {
+            const nav = document.getElementById('adminNavCollapse');
+            nav.classList.toggle('open');
+        }
+
+        // Highlight active link
+        const links = document.querySelectorAll('.admin-nav li a');
+        const path = window.location.pathname;
+        links.forEach(link => {
+            if (link.getAttribute('href') && path.includes(link.getAttribute('href'))) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

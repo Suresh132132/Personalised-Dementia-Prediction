@@ -1,0 +1,422 @@
+{% extends 'users/userbase.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    /* ── TRAIN PAGE ─────────────────────────────── */
+    .train-page {
+        min-height: 90vh;
+        background: #F4FAFA;
+        padding: 48px 32px 60px;
+    }
+
+    /* ── PAGE HEADER ────────────────────────────── */
+    .train-header {
+        text-align: center;
+        margin-bottom: 36px;
+    }
+    .train-header .sec-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #0A7C6E;
+        background: #E0F7F5;
+        padding: 4px 13px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+    }
+    .train-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+        font-weight: 700;
+        color: #043A34;
+        margin-bottom: 8px;
+    }
+    .train-header h2 span { color: #0A7C6E; }
+    .train-header p {
+        font-size: 0.9rem;
+        color: #7FA9A4;
+        margin: 0;
+    }
+
+    /* ── UPLOAD CARD ────────────────────────────── */
+    .upload-card {
+        background: white;
+        border: 1px solid #C5E8E4;
+        border-radius: 16px;
+        padding: 36px 40px;
+        max-width: 520px;
+        margin: 0 auto 40px;
+        box-shadow: 0 4px 24px rgba(10,124,110,0.07);
+        position: relative;
+        overflow: hidden;
+    }
+    .upload-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #065A50, #0A7C6E, #00C9B1);
+    }
+    .upload-card-icon {
+        width: 60px; height: 60px;
+        background: linear-gradient(135deg, #0A7C6E, #00C9B1);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        box-shadow: 0 6px 20px rgba(10,124,110,0.25);
+    }
+    .upload-card-icon i { color: white; font-size: 1.4rem; }
+    .upload-card h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #043A34;
+        text-align: center;
+        margin-bottom: 6px;
+    }
+    .upload-card p {
+        font-size: 0.83rem;
+        color: #7FA9A4;
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    /* File input */
+    .file-input-wrap {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    .file-input-wrap input[type="file"] {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px dashed #C5E8E4;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.88rem;
+        color: #3A5C58;
+        background: #F4FAFA;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+        outline: none;
+    }
+    .file-input-wrap input[type="file"]:hover,
+    .file-input-wrap input[type="file"]:focus {
+        border-color: #0A7C6E;
+        background: white;
+    }
+
+    /* Train button */
+    .btn-train {
+        width: 100%;
+        padding: 13px 20px;
+        background: linear-gradient(135deg, #0A7C6E, #00C9B1);
+        color: white;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.25s;
+        box-shadow: 0 4px 14px rgba(10,124,110,0.28);
+    }
+    .btn-train:hover {
+        background: linear-gradient(135deg, #065A50, #0A7C6E);
+        box-shadow: 0 6px 20px rgba(10,124,110,0.38);
+        transform: translateY(-1px);
+    }
+
+    /* ── SUCCESS MESSAGE ────────────────────────── */
+    .train-success-msg {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #E0F7F5;
+        border: 1px solid #C5E8E4;
+        border-left: 4px solid #0A7C6E;
+        border-radius: 10px;
+        padding: 13px 18px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #043A34;
+        max-width: 800px;
+        margin: 0 auto 36px;
+    }
+    .train-success-msg i { color: #0A7C6E; font-size: 1.1rem; flex-shrink: 0; }
+
+    /* ── RESULTS SECTION ────────────────────────── */
+    .results-section-title {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+    .results-section-title h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #043A34;
+        margin-bottom: 6px;
+    }
+    .results-section-title h3 span { color: #0A7C6E; }
+    .results-section-title p {
+        font-size: 0.85rem;
+        color: #7FA9A4;
+    }
+
+    /* Model result cards grid */
+    .model-results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 22px;
+        max-width: 960px;
+        margin: 0 auto 40px;
+    }
+    .model-result-card {
+        background: white;
+        border: 1px solid #C5E8E4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(10,124,110,0.07);
+        transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .model-result-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 32px rgba(10,124,110,0.13);
+    }
+    .model-card-header {
+        background: linear-gradient(135deg, #065A50, #0A7C6E);
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .model-card-header h5 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+    }
+    .model-card-header .acc-badge {
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.28);
+        color: white;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+    .model-card-body {
+        padding: 16px;
+    }
+    .model-card-body img {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #E0F7F5;
+        display: block;
+    }
+    /* Accuracy bar inside card */
+    .acc-bar-wrap {
+        margin-bottom: 12px;
+    }
+    .acc-bar-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #3A5C58;
+        margin-bottom: 5px;
+    }
+    .acc-bar-label span:last-child { color: #0A7C6E; }
+    .acc-bar-track {
+        background: #E0F7F5;
+        border-radius: 6px;
+        height: 8px;
+        overflow: hidden;
+    }
+    .acc-bar-fill {
+        height: 100%;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #0A7C6E, #00C9B1);
+        transition: width 1s ease;
+    }
+
+    /* ── HEATMAP SECTION ────────────────────────── */
+    .heatmap-section {
+        max-width: 860px;
+        margin: 0 auto;
+    }
+    .heatmap-card {
+        background: white;
+        border: 1px solid #C5E8E4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(10,124,110,0.07);
+    }
+    .heatmap-card-header {
+        background: linear-gradient(135deg, #043A34, #065A50);
+        padding: 16px 22px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .heatmap-card-header i { color: #00C9B1; font-size: 1rem; }
+    .heatmap-card-header h5 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+    }
+    .heatmap-card-header p {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.6);
+        margin: 2px 0 0;
+    }
+    .heatmap-card-body {
+        padding: 20px;
+        text-align: center;
+    }
+    .heatmap-card-body img {
+        width: 100%;
+        max-width: 780px;
+        border-radius: 8px;
+        border: 1px solid #E0F7F5;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 768px) {
+        .train-page { padding: 32px 16px 48px; }
+        .upload-card { padding: 28px 22px; }
+        .model-results-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 500px) {
+        .upload-card { margin-left: 0; margin-right: 0; }
+    }
+</style>
+{% endblock %}
+
+{% block contents %}
+<section class="train-page">
+    <div class="container-fluid">
+
+        <!-- Page Header -->
+        <div class="train-header">
+            <span class="sec-label"><i class="fas fa-robot"></i> Model Training</span>
+            <h2>Train Dementia <span>Prediction Model</span></h2>
+            <p>Upload your dataset CSV file to train and compare all three ML models</p>
+        </div>
+
+        <!-- Upload Card — form action/method/name unchanged -->
+        <div class="upload-card">
+            <div class="upload-card-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h4>Upload Dataset</h4>
+            <p>Upload the OASIS-2 CSV file to start training Random Forest, SVM and Logistic Regression models</p>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="file-input-wrap">
+                    <input type="file" name="file" required accept=".csv">
+                </div>
+                <button type="submit" class="btn-train">
+                    <i class="fas fa-play-circle"></i> Start Training
+                </button>
+            </form>
+        </div>
+
+        <!-- Results section — only shown after training -->
+        {% if message %}
+
+        <!-- Success message -->
+        <div class="train-success-msg">
+            <i class="fas fa-check-circle"></i>
+            {{ message }}
+        </div>
+
+        <!-- Model Comparison -->
+        <div class="results-section-title">
+            <span class="sec-label" style="margin-bottom:10px;display:inline-flex;"><i class="fas fa-chart-bar"></i> Results</span>
+            <h3>Model <span>Comparison</span></h3>
+            <p>Accuracy scores and confusion matrices for all three trained models</p>
+        </div>
+
+        <div class="model-results-grid">
+            {% for model, data in results.items %}
+            <div class="model-result-card">
+                <div class="model-card-header">
+                    <h5>{{ model }}</h5>
+                    <span class="acc-badge">{{ data.accuracy }}% Accuracy</span>
+                </div>
+                <div class="model-card-body">
+                    <div class="acc-bar-wrap">
+                        <div class="acc-bar-label">
+                            <span>Test Accuracy</span>
+                            <span>{{ data.accuracy }}%</span>
+                        </div>
+                        <div class="acc-bar-track">
+                            <div class="acc-bar-fill" style="width: {{ data.accuracy }}%;"></div>
+                        </div>
+                    </div>
+                    {% if data.precision %}
+                    <div class="acc-bar-wrap" style="margin-top: 12px;">
+                        <div class="acc-bar-label">
+                            <span>Precision</span>
+                            <span>{{ data.precision }}%</span>
+                        </div>
+                        <div class="acc-bar-track">
+                            <div class="acc-bar-fill" style="width: {{ data.precision }}%; background: linear-gradient(90deg, #A8C5C2, #3A5C58);"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if data.recall %}
+                    <div class="acc-bar-wrap" style="margin-top: 12px; margin-bottom: 20px;">
+                        <div class="acc-bar-label">
+                            <span>Recall</span>
+                            <span>{{ data.recall }}%</span>
+                        </div>
+                        <div class="acc-bar-track">
+                            <div class="acc-bar-fill" style="width: {{ data.recall }}%; background: linear-gradient(90deg, #FDE68A, #d97706);"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <img src="/media/{{ data.image }}" alt="{{ model }} confusion matrix">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Correlation Heatmap -->
+        <div class="heatmap-section">
+            <div class="heatmap-card">
+                <div class="heatmap-card-header">
+                    <div>
+                        <i class="fas fa-th"></i>
+                    </div>
+                    <div>
+                        <h5>Correlation Heatmap</h5>
+                        <p>Feature correlation matrix across the OASIS-2 dataset</p>
+                    </div>
+                </div>
+                <div class="heatmap-card-body">
+                    <img src="/media/{{ heatmap_img }}" alt="Correlation Heatmap">
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

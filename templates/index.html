@@ -1,0 +1,938 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<style>
+    /* ════════════════════════════════════════════
+       INDEX PAGE — Medical / Clinical Theme
+    ════════════════════════════════════════════ */
+
+    /* ── HERO ─────────────────────────────────── */
+    .hero {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #065A50 0%, #0A7C6E 50%, #0D9488 100%);
+        padding: 90px 40px 80px;
+        color: white;
+    }
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            radial-gradient(circle at 10% 20%, rgba(0,201,177,0.18) 0%, transparent 50%),
+            radial-gradient(circle at 90% 80%, rgba(255,255,255,0.06) 0%, transparent 40%);
+        pointer-events: none;
+    }
+    /* Decorative brain circuit pattern */
+    .hero-deco {
+        position: absolute;
+        top: -40px; right: -40px;
+        width: 420px; height: 420px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(255,255,255,0.07);
+        pointer-events: none;
+    }
+    .hero-deco::after {
+        content: '';
+        position: absolute;
+        inset: 30px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(0,201,177,0.15);
+    }
+    .hero-deco-2 {
+        position: absolute;
+        bottom: -60px; left: -60px;
+        width: 300px; height: 300px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.05);
+        pointer-events: none;
+    }
+
+    .hero-content { position: relative; z-index: 2; }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0,201,177,0.18);
+        border: 1px solid rgba(0,201,177,0.4);
+        color: #A8F0E8;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        padding: 6px 16px;
+        border-radius: 20px;
+        margin-bottom: 22px;
+        animation: fadeSlideDown 0.6s ease both;
+    }
+    .hero-badge i { font-size: 0.7rem; }
+
+    .hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 22px;
+        animation: fadeSlideDown 0.7s 0.1s ease both;
+    }
+    .hero h1 .highlight {
+        color: #00C9B1;
+        position: relative;
+    }
+
+    .hero p {
+        font-size: 1.05rem;
+        line-height: 1.75;
+        color: rgba(255,255,255,0.82);
+        max-width: 580px;
+        margin-bottom: 36px;
+        animation: fadeSlideDown 0.7s 0.2s ease both;
+    }
+
+    .hero-btns {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        animation: fadeSlideDown 0.7s 0.3s ease both;
+    }
+    .btn-hero-primary {
+        background: white;
+        color: var(--primary-dark, #065A50);
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 13px 30px;
+        border-radius: 10px;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+    }
+    .btn-hero-primary:hover {
+        background: #E0F7F5;
+        color: #065A50;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+    }
+    .btn-hero-outline {
+        background: transparent;
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 13px 28px;
+        border-radius: 10px;
+        border: 1.5px solid rgba(255,255,255,0.45);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s;
+    }
+    .btn-hero-outline:hover {
+        background: rgba(255,255,255,0.1);
+        color: white;
+        border-color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    /* Hero visual card */
+    .hero-visual {
+        position: relative;
+        z-index: 2;
+        animation: fadeSlideUp 0.8s 0.2s ease both;
+    }
+    .hero-card {
+        background: rgba(255,255,255,0.10);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .hero-card-title {
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #A8F0E8;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .hero-card-title::before {
+        content: '';
+        width: 20px; height: 2px;
+        background: #00C9B1;
+        border-radius: 2px;
+    }
+    .model-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+    .model-row:last-child { margin-bottom: 0; }
+    .model-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: rgba(255,255,255,0.9);
+        width: 140px;
+        flex-shrink: 0;
+    }
+    .model-bar-wrap {
+        flex: 1;
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+        height: 10px;
+        overflow: hidden;
+    }
+    .model-bar {
+        height: 100%;
+        border-radius: 8px;
+        transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .model-bar.rf  { background: linear-gradient(90deg,#00C9B1,#A8F0E8); }
+    .model-bar.lr  { background: linear-gradient(90deg,#4DB6AC,#80CBC4); }
+    .model-bar.svm { background: linear-gradient(90deg,#FF7043,#FFAB91); }
+    .model-pct {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: white;
+        width: 48px;
+        text-align: right;
+    }
+    .model-chip {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 6px;
+        background: rgba(0,201,177,0.25);
+        color: #A8F0E8;
+        white-space: nowrap;
+    }
+
+    /* ── STATS BAR ────────────────────────────── */
+    .stats-bar {
+        background: white;
+        border-bottom: 1px solid #C5E8E4;
+        padding: 0;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-right: 1px solid #C5E8E4;
+    }
+    .stat-cell {
+        padding: 24px 28px;
+        border-left: 1px solid #C5E8E4;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: background 0.2s;
+    }
+    .stat-cell:hover { background: #F4FAFA; }
+    .stat-icon {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        background: var(--accent-soft, #E0F7F5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .stat-icon i { color: #0A7C6E; font-size: 1rem; }
+    .stat-value {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #065A50;
+        line-height: 1;
+    }
+    .stat-value span { color: #00C9B1; }
+    .stat-label {
+        font-size: 0.78rem;
+        color: #7FA9A4;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    /* ── SECTION COMMONS ──────────────────────── */
+    .section { padding: 72px 40px; }
+    .section-alt { background: white; }
+    .section-teal { background: #E0F7F5; }
+
+    .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #0A7C6E;
+        background: #E0F7F5;
+        padding: 5px 14px;
+        border-radius: 20px;
+        margin-bottom: 14px;
+    }
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.6rem, 3vw, 2.4rem);
+        font-weight: 700;
+        color: #0D2B27;
+        margin-bottom: 12px;
+        line-height: 1.25;
+    }
+    .section-title .teal { color: #0A7C6E; }
+    .section-subtitle {
+        font-size: 1rem;
+        color: #3A5C58;
+        line-height: 1.75;
+        max-width: 580px;
+    }
+
+    /* ── FEATURE CARDS ────────────────────────── */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 40px;
+    }
+    .feature-card {
+        background: white;
+        border: 1px solid #C5E8E4;
+        border-radius: 16px;
+        padding: 30px 26px;
+        transition: all 0.28s;
+        position: relative;
+        overflow: hidden;
+    }
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0A7C6E, #00C9B1);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 36px rgba(10,124,110,0.13);
+        border-color: #0A7C6E;
+    }
+    .feature-card:hover::before { transform: scaleX(1); }
+
+    .feature-icon-wrap {
+        width: 52px; height: 52px;
+        border-radius: 14px;
+        background: #E0F7F5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        transition: background 0.25s;
+    }
+    .feature-card:hover .feature-icon-wrap { background: #0A7C6E; }
+    .feature-icon-wrap i { color: #0A7C6E; font-size: 1.15rem; transition: color 0.25s; }
+    .feature-card:hover .feature-icon-wrap i { color: white; }
+
+    .feature-card h5 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0D2B27;
+        margin-bottom: 10px;
+    }
+    .feature-card p {
+        font-size: 0.875rem;
+        color: #3A5C58;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    /* ── HOW IT WORKS ─────────────────────────── */
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        margin-top: 44px;
+        position: relative;
+    }
+    .steps-grid::before {
+        content: '';
+        position: absolute;
+        top: 30px;
+        left: calc(12.5% + 20px);
+        right: calc(12.5% + 20px);
+        height: 2px;
+        background: linear-gradient(90deg, #C5E8E4, #0A7C6E, #C5E8E4);
+        z-index: 0;
+    }
+    .step-card {
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+    .step-num {
+        width: 60px; height: 60px;
+        border-radius: 50%;
+        background: white;
+        border: 2.5px solid #C5E8E4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0A7C6E;
+        transition: all 0.25s;
+    }
+    .step-card:hover .step-num {
+        background: #0A7C6E;
+        border-color: #0A7C6E;
+        color: white;
+        box-shadow: 0 0 0 6px rgba(10,124,110,0.12);
+    }
+    .step-card h6 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #0D2B27;
+        margin-bottom: 8px;
+    }
+    .step-card p {
+        font-size: 0.82rem;
+        color: #3A5C58;
+        line-height: 1.65;
+    }
+
+    /* ── INPUT FEATURES TABLE ─────────────────── */
+    .features-table-wrap {
+        background: white;
+        border: 1px solid #C5E8E4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(10,124,110,0.06);
+        margin-top: 36px;
+    }
+    .features-table-wrap table {
+        width: 100%;
+        margin: 0;
+        font-size: 0.875rem;
+    }
+    .features-table-wrap thead th {
+        background: #0A7C6E;
+        color: white;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        padding: 14px 20px;
+        border: none;
+    }
+    .features-table-wrap tbody tr td {
+        padding: 11px 20px;
+        border-top: 1px solid #E0F7F5;
+        color: #3A5C58;
+        vertical-align: middle;
+    }
+    .features-table-wrap tbody tr:hover td { background: #F4FAFA; }
+    .tag-pill {
+        display: inline-block;
+        background: #E0F7F5;
+        color: #0A7C6E;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 10px;
+        letter-spacing: 0.03em;
+    }
+
+    /* ── RESULTS ──────────────────────────────── */
+    .results-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 36px;
+    }
+    .result-card {
+        border-radius: 16px;
+        padding: 30px 24px;
+        text-align: center;
+        border: 1px solid #C5E8E4;
+        background: white;
+        transition: all 0.25s;
+    }
+    .result-card.best {
+        background: linear-gradient(135deg, #065A50, #0A7C6E);
+        border-color: transparent;
+        color: white;
+    }
+    .result-card:not(.best):hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(10,124,110,0.12);
+    }
+    .result-card.best:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(6,90,80,0.3);
+    }
+    .result-model {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.65;
+        margin-bottom: 8px;
+    }
+    .result-card.best .result-model { color: #A8F0E8; opacity: 1; }
+    .result-accuracy {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.8rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #0A7C6E;
+        margin-bottom: 6px;
+    }
+    .result-card.best .result-accuracy { color: #00C9B1; }
+    .result-metrics {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+    }
+    .metric-chip {
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 8px;
+        background: #E0F7F5;
+        color: #0A7C6E;
+    }
+    .result-card.best .metric-chip {
+        background: rgba(255,255,255,0.15);
+        color: rgba(255,255,255,0.9);
+    }
+    .best-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(0,201,177,0.2);
+        color: #A8F0E8;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 3px 12px;
+        border-radius: 20px;
+        border: 1px solid rgba(0,201,177,0.3);
+        margin-bottom: 10px;
+    }
+
+    /* ── CTA ──────────────────────────────────── */
+    .cta-section {
+        background: linear-gradient(135deg, #0A7C6E 0%, #065A50 100%);
+        padding: 80px 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(circle at 20% 50%, rgba(0,201,177,0.15) 0%, transparent 50%),
+                          radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 40%);
+    }
+    .cta-section h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+        position: relative;
+    }
+    .cta-section p {
+        color: rgba(255,255,255,0.78);
+        font-size: 1rem;
+        max-width: 500px;
+        margin: 0 auto 36px;
+        position: relative;
+    }
+    .cta-btns {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+    }
+
+    /* ── ANIMATIONS ───────────────────────────── */
+    @keyframes fadeSlideDown {
+        from { opacity: 0; transform: translateY(-18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes countUp {
+        from { opacity: 0; transform: scale(0.8); }
+        to   { opacity: 1; transform: scale(1); }
+    }
+    .animate-in {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .animate-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ───────────────────────────── */
+    @media (max-width: 991px) {
+        .hero { padding: 60px 24px; }
+        .section { padding: 52px 24px; }
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .features-grid { grid-template-columns: repeat(2, 1fr); }
+        .steps-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .steps-grid::before { display: none; }
+        .results-cards { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .hero-visual { margin-top: 36px; }
+    }
+    @media (max-width: 600px) {
+        .hero { padding: 50px 20px; }
+        .section { padding: 44px 20px; }
+        .stats-grid { grid-template-columns: 1fr 1fr; }
+        .stat-cell { padding: 18px 16px; }
+        .features-grid { grid-template-columns: 1fr; }
+        .steps-grid { grid-template-columns: 1fr 1fr; }
+        .cta-section { padding: 56px 20px; }
+    }
+</style>
+{% endblock %}
+
+{% block contents %}
+
+<!-- ══ HERO ══════════════════════════════════════ -->
+<section class="hero">
+    <div class="hero-deco"></div>
+    <div class="hero-deco-2"></div>
+    <div class="container-fluid hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="hero-badge">
+                    <i class="fas fa-flask"></i> IEEE ICPCT 2025 — Published Research
+                </div>
+                <h1>
+                    Early Detection of<br>
+                    <span class="highlight">Dementia</span> Using<br>
+                    Machine Learning
+                </h1>
+                <p>
+                    A personalized, data-driven platform leveraging Random Forest, SVM, and Logistic
+                    Regression to predict dementia risk from genetic, cognitive, and lifestyle indicators —
+                    achieving up to <strong style="color:#00C9B1;">70% accuracy</strong> using the OASIS longitudinal MRI dataset.
+                </p>
+                <div class="hero-btns">
+                    <a href="{% url 'UserRegister' %}" class="btn-hero-primary">
+                        <i class="fas fa-user-plus"></i> Get Started
+                    </a>
+                    <a href="{% url 'UserLogin' %}" class="btn-hero-outline">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 offset-lg-1">
+                <div class="hero-visual">
+                    <div class="hero-card">
+                        <div class="hero-card-title">
+                            <i class="fas fa-chart-bar" style="color:#00C9B1;"></i>
+                            ML Model Performance Comparison
+                        </div>
+                        <div class="model-row">
+                            <span class="model-name"><i class="fas fa-tree" style="margin-right:6px;font-size:0.75rem;color:#00C9B1;"></i>Random Forest</span>
+                            <div class="model-bar-wrap">
+                                <div class="model-bar rf" style="width:70%"></div>
+                            </div>
+                            <span class="model-pct">70%</span>
+                            <span class="model-chip">Best</span>
+                        </div>
+                        <div class="model-row">
+                            <span class="model-name"><i class="fas fa-project-diagram" style="margin-right:6px;font-size:0.75rem;color:#4DB6AC;"></i>Logistic Reg.</span>
+                            <div class="model-bar-wrap">
+                                <div class="model-bar lr" style="width:68%"></div>
+                            </div>
+                            <span class="model-pct">68%</span>
+                        </div>
+                        <div class="model-row">
+                            <span class="model-name"><i class="fas fa-vector-square" style="margin-right:6px;font-size:0.75rem;color:#FF7043;"></i>SVM</span>
+                            <div class="model-bar-wrap">
+                                <div class="model-bar svm" style="width:69%"></div>
+                            </div>
+                            <span class="model-pct">69%</span>
+                        </div>
+                        <div style="margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.12);display:flex;gap:20px;flex-wrap:wrap;">
+                            <div style="text-align:center;">
+                                <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#00C9B1;">1210</div>
+                                <div style="font-size:0.68rem;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.06em;">MRI Records</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#00C9B1;">10</div>
+                                <div style="font-size:0.68rem;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.06em;">Features</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#00C9B1;">3</div>
+                                <div style="font-size:0.68rem;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.06em;">Classes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ STATS BAR ══════════════════════════════════ -->
+<div class="stats-bar">
+    <div class="stats-grid">
+        <div class="stat-cell animate-in">
+            <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+            <div>
+                <div class="stat-value">70<span>%</span></div>
+                <div class="stat-label">Best Model Accuracy (RF)</div>
+            </div>
+        </div>
+        <div class="stat-cell animate-in" style="transition-delay:0.1s">
+            <div class="stat-icon"><i class="fas fa-brain"></i></div>
+            <div>
+                <div class="stat-value">1210</div>
+                <div class="stat-label">OASIS MRI Records</div>
+            </div>
+        </div>
+        <div class="stat-cell animate-in" style="transition-delay:0.2s">
+            <div class="stat-icon"><i class="fas fa-sliders-h"></i></div>
+            <div>
+                <div class="stat-value">10</div>
+                <div class="stat-label">Clinical Input Features</div>
+            </div>
+        </div>
+        <div class="stat-cell animate-in" style="transition-delay:0.3s">
+            <div class="stat-icon"><i class="fas fa-robot"></i></div>
+            <div>
+                <div class="stat-value">3</div>
+                <div class="stat-label">ML Algorithms Compared</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══ ABOUT / FEATURES ═══════════════════════════ -->
+<section class="section section-alt">
+    <div class="container-fluid">
+        <div class="text-center mb-2 animate-in">
+            <span class="section-label"><i class="fas fa-star"></i> What We Offer</span>
+            <h2 class="section-title">A Complete <span class="teal">Clinical Intelligence</span> Platform</h2>
+            <p class="section-subtitle mx-auto">
+                Combining genetic biomarkers, cognitive assessments, and lifestyle data to deliver
+                accurate, personalized dementia risk predictions.
+            </p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card animate-in">
+                <div class="feature-icon-wrap"><i class="fas fa-id-card"></i></div>
+                <h5>Subject & Visit Tracking</h5>
+                <p>Each patient (Subject ID) may have multiple MRI visits over time, allowing longitudinal tracking of cognitive progression from Nondemented → Converted → Demented.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay:0.1s">
+                <div class="feature-icon-wrap"><i class="fas fa-brain"></i></div>
+                <h5>MRI Brain Volume Analysis</h5>
+                <p>Uses eTIV (estimated Total Intracranial Volume), nWBV (normalized Whole Brain Volume), and ASF (Atlas Scaling Factor) extracted from OASIS longitudinal MRI scans.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay:0.2s">
+                <div class="feature-icon-wrap"><i class="fas fa-clipboard-check"></i></div>
+                <h5>Cognitive Scoring (MMSE & CDR)</h5>
+                <p>Mini-Mental State Examination (MMSE) and Clinical Dementia Rating (CDR) scores are the core clinical indicators of cognitive decline used by the prediction model.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay:0.1s">
+                <div class="feature-icon-wrap"><i class="fas fa-user-alt"></i></div>
+                <h5>Demographic Features</h5>
+                <p>Patient age, gender (M/F), dominant hand, years of education (EDUC), and socioeconomic status (SES) all contribute to the personalised risk assessment.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay:0.2s">
+                <div class="feature-icon-wrap"><i class="fas fa-chart-line"></i></div>
+                <h5>Multi-Model Comparison</h5>
+                <p>Transparently compares Random Forest (70%), SVM (69%), and Logistic Regression (68%) — giving a clear view of algorithm strengths on real longitudinal MRI data.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay:0.3s">
+                <div class="feature-icon-wrap"><i class="fas fa-database"></i></div>
+                <h5>OASIS Longitudinal Dataset</h5>
+                <p>Trained on the publicly available OASIS-2 dataset: 1,210 MRI records from 150+ subjects aged 60–96, spanning Nondemented (602), Demented (461), and Converted (147) groups.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ HOW IT WORKS ═══════════════════════════════ -->
+<section class="section section-teal">
+    <div class="container-fluid">
+        <div class="text-center animate-in">
+            <span class="section-label"><i class="fas fa-cogs"></i> Process</span>
+            <h2 class="section-title">How It <span class="teal">Works</span></h2>
+            <p class="section-subtitle mx-auto">From patient data to a reliable prediction in four clear steps.</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card animate-in">
+                <div class="step-num">1</div>
+                <h6>Register & Enter Data</h6>
+                <p>Create an account and input your clinical profile — age, gender, genetic markers, lifestyle habits, and cognitive scores.</p>
+            </div>
+            <div class="step-card animate-in" style="transition-delay:0.1s">
+                <div class="step-num">2</div>
+                <h6>Data Preprocessing</h6>
+                <p>The system cleans, encodes, and normalises your inputs, removing nulls and transforming categorical variables for the ML pipeline.</p>
+            </div>
+            <div class="step-card animate-in" style="transition-delay:0.2s">
+                <div class="step-num">3</div>
+                <h6>ML Model Inference</h6>
+                <p>Your preprocessed data is passed through the trained Random Forest model, with features weighted by clinical importance.</p>
+            </div>
+            <div class="step-card animate-in" style="transition-delay:0.3s">
+                <div class="step-num">4</div>
+                <h6>Receive Your Prediction</h6>
+                <p>A clear dementia risk prediction (positive / negative) is returned alongside the confidence score and key contributing factors.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ INPUT FEATURES ═════════════════════════════ -->
+<section class="section section-alt">
+    <div class="container-fluid">
+        <div class="animate-in">
+            <span class="section-label"><i class="fas fa-table"></i> Dataset</span>
+            <h2 class="section-title">10 Clinical <span class="teal">Input Features</span></h2>
+            <p class="section-subtitle">All features come from the OASIS-2 longitudinal MRI dataset — spanning demographic, cognitive, and neuroimaging domains.</p>
+        </div>
+        <div class="features-table-wrap animate-in">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Feature</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td><strong>Visit</strong></td><td>Visit number for the subject — tracks longitudinal progression</td><td><span class="tag-pill">Numeric</span></td></tr>
+                    <tr><td>2</td><td><strong>MR Delay</strong></td><td>Days elapsed between visits / MRI sessions</td><td><span class="tag-pill">Numeric</span></td></tr>
+                    <tr><td>3</td><td><strong>M/F</strong></td><td>Gender of the patient (Male / Female)</td><td><span class="tag-pill">Categorical</span></td></tr>
+                    <tr><td>4</td><td><strong>Age</strong></td><td>Age of the subject — risk increases significantly after 60</td><td><span class="tag-pill">Numeric</span></td></tr>
+                    <tr><td>5</td><td><strong>EDUC</strong></td><td>Years of education — higher education provides cognitive reserve</td><td><span class="tag-pill">Numeric</span></td></tr>
+                    <tr><td>6</td><td><strong>SES</strong></td><td>Socioeconomic status (1–5 scale) — linked to healthcare access</td><td><span class="tag-pill">Ordinal</span></td></tr>
+                    <tr><td>7</td><td><strong>MMSE</strong></td><td>Mini-Mental State Examination score (0–30) — key cognitive indicator</td><td><span class="tag-pill">Numeric</span></td></tr>
+                    <tr><td>8</td><td><strong>CDR</strong></td><td>Clinical Dementia Rating (0, 0.5, 1, 2) — primary dementia severity scale</td><td><span class="tag-pill">Ordinal</span></td></tr>
+                    <tr><td>9</td><td><strong>eTIV</strong></td><td>Estimated Total Intracranial Volume (mm³) from MRI scan</td><td><span class="tag-pill">Numeric</span></td></tr>
+                    <tr><td>10</td><td><strong>nWBV</strong></td><td>Normalised Whole Brain Volume — decreases with dementia progression</td><td><span class="tag-pill">Numeric</span></td></tr>
+                    <tr><td>11</td><td><strong>ASF</strong></td><td>Atlas Scaling Factor — corrects for head size variation across subjects</td><td><span class="tag-pill">Numeric</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-3 animate-in" style="font-size:0.82rem;color:#3A5C58;">
+            <i class="fas fa-info-circle" style="color:#0A7C6E;margin-right:6px;"></i>
+            <strong>Target variable:</strong> <em>Group</em> — classified as <span class="tag-pill">Nondemented</span>, <span class="tag-pill">Demented</span>, or <span class="tag-pill">Converted</span>. Source: <a href="https://www.oasis-brains.org/" target="_blank" style="color:#0A7C6E;">OASIS Brains (oasis-brains.org)</a>
+        </div>
+    </div>
+</section>
+
+<!-- ══ RESULTS ════════════════════════════════════ -->
+<section class="section" style="background:#F4FAFA;">
+    <div class="container-fluid">
+        <div class="text-center animate-in">
+            <span class="section-label"><i class="fas fa-trophy"></i> Results</span>
+            <h2 class="section-title">Model <span class="teal">Performance</span> Summary</h2>
+            <p class="section-subtitle mx-auto">Evaluated on the OASIS-2 longitudinal MRI dataset with 3-class classification: Nondemented, Demented, and Converted.</p>
+        </div>
+        <div class="results-cards">
+            <div class="result-card best animate-in">
+                <div class="best-tag"><i class="fas fa-crown"></i> Best Model</div>
+                <div class="result-model">Random Forest</div>
+                <div class="result-accuracy">70%</div>
+                <div style="font-size:0.8rem;color:rgba(255,255,255,0.65);margin-top:4px;">Overall Accuracy</div>
+                <div class="result-metrics">
+                    <span class="metric-chip">Highest Accuracy</span>
+                    <span class="metric-chip">1210 Records</span>
+                    <span class="metric-chip">3-Class Output</span>
+                </div>
+            </div>
+            <div class="result-card animate-in" style="transition-delay:0.1s">
+                <div class="result-model">Support Vector Machine</div>
+                <div class="result-accuracy" style="color:#0A7C6E;">69%</div>
+                <div style="font-size:0.8rem;color:#7FA9A4;margin-top:4px;">Overall Accuracy</div>
+                <div class="result-metrics">
+                    <span class="metric-chip">2nd Best</span>
+                    <span class="metric-chip">Close to RF</span>
+                </div>
+            </div>
+            <div class="result-card animate-in" style="transition-delay:0.2s">
+                <div class="result-model">Logistic Regression</div>
+                <div class="result-accuracy" style="color:#0A7C6E;">68%</div>
+                <div style="font-size:0.8rem;color:#7FA9A4;margin-top:4px;">Overall Accuracy</div>
+                <div class="result-metrics">
+                    <span class="metric-chip">Baseline Model</span>
+                    <span class="metric-chip">Interpretable</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ CTA ════════════════════════════════════════ -->
+<section class="cta-section">
+    <h2>Ready to Assess Your Dementia Risk?</h2>
+    <p>Join our platform today and receive a personalised early-detection report powered by a 98.75% accurate machine learning model.</p>
+    <div class="cta-btns">
+        <a href="{% url 'UserRegister' %}" class="btn-hero-primary">
+            <i class="fas fa-user-plus"></i> Create Free Account
+        </a>
+        <a href="{% url 'UserLogin' %}" class="btn-hero-outline">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+    </div>
+</section>
+
+<script>
+    // Scroll-triggered reveal
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => entry.target.classList.add('visible'), 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.animate-in').forEach(el => observer.observe(el));
+
+    // Animate bars on load
+    window.addEventListener('load', () => {
+        document.querySelectorAll('.model-bar').forEach(bar => {
+            const w = bar.style.width;
+            bar.style.width = '0';
+            setTimeout(() => { bar.style.width = w; }, 400);
+        });
+    });
+</script>
+
+{% endblock %}

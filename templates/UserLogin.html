@@ -1,0 +1,387 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    /* ── LOGIN PAGE ─────────────────────────────── */
+    .login-section {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-image: url('https://medicaldialogues.in/h-upload/2020/03/13/125443-dementia.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding: 60px 20px;
+    }
+
+    /* Dark teal overlay on top of image */
+    .login-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            135deg,
+            rgba(6, 90, 80, 0.82) 0%,
+            rgba(10, 124, 110, 0.70) 50%,
+            rgba(0, 80, 72, 0.80) 100%
+        );
+        z-index: 1;
+    }
+
+    /* Decorative circles */
+    .login-section::after {
+        content: '';
+        position: absolute;
+        width: 500px; height: 500px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(0, 201, 177, 0.15);
+        top: -120px; right: -120px;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .login-deco {
+        position: absolute;
+        width: 320px; height: 320px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.07);
+        bottom: -80px; left: -80px;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* ── CARD ───────────────────────────────────── */
+    .login-wrapper {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 440px;
+        animation: fadeSlideUp 0.65s ease both;
+    }
+
+    .login-card {
+        background: rgba(255, 255, 255, 0.97);
+        border-radius: 20px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0,201,177,0.15);
+        overflow: hidden;
+    }
+
+    /* Card top accent bar */
+    .login-card-accent {
+        height: 5px;
+        background: linear-gradient(90deg, #065A50, #0A7C6E, #00C9B1);
+    }
+
+    .login-card-body {
+        padding: 38px 36px 36px;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .login-icon {
+        width: 60px; height: 60px;
+        background: linear-gradient(135deg, #0A7C6E, #00C9B1);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        box-shadow: 0 6px 20px rgba(10,124,110,0.28);
+    }
+    .login-icon i { color: white; font-size: 1.4rem; }
+
+    .login-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #065A50;
+        margin-bottom: 6px;
+        line-height: 1.2;
+    }
+    .login-header p {
+        font-size: 0.85rem;
+        color: #7FA9A4;
+        margin: 0;
+    }
+
+    /* ── FORM FIELDS ────────────────────────────── */
+    .field-group {
+        margin-bottom: 18px;
+    }
+    .field-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #3A5C58;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 7px;
+        display: block;
+    }
+    .field-wrap {
+        position: relative;
+    }
+    .field-wrap .field-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0A7C6E;
+        font-size: 0.9rem;
+        pointer-events: none;
+    }
+    .field-wrap input {
+        width: 100%;
+        padding: 12px 14px 12px 40px;
+        border: 1.5px solid #C5E8E4;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.92rem;
+        color: #0D2B27;
+        background: #F4FAFA;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        outline: none;
+    }
+    .field-wrap input::placeholder { color: #A8C5C2; }
+    .field-wrap input:focus {
+        border-color: #0A7C6E;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(10,124,110,0.10);
+    }
+
+    /* ── BUTTONS ────────────────────────────────── */
+    .login-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+    .btn-login {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.92rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        transition: all 0.25s;
+        text-decoration: none;
+    }
+    .btn-login-primary {
+        background: linear-gradient(135deg, #0A7C6E, #00C9B1);
+        color: white;
+        box-shadow: 0 4px 14px rgba(10,124,110,0.28);
+    }
+    .btn-login-primary:hover {
+        background: linear-gradient(135deg, #065A50, #0A7C6E);
+        box-shadow: 0 6px 20px rgba(10,124,110,0.38);
+        transform: translateY(-1px);
+        color: white;
+    }
+    .btn-login-reset {
+        background: #E0F7F5;
+        color: #0A7C6E;
+        border: 1.5px solid #C5E8E4;
+    }
+    .btn-login-reset:hover {
+        background: #C5E8E4;
+        color: #065A50;
+        transform: translateY(-1px);
+    }
+
+    /* ── MESSAGES ───────────────────────────────── */
+    .login-message {
+        margin-top: 16px;
+        padding: 10px 14px;
+        border-radius: 9px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #E0F7F5;
+        color: #065A50;
+        border: 1px solid #C5E8E4;
+    }
+    .login-message.error {
+        background: #FFF0EE;
+        color: #C0392B;
+        border-color: #FADADD;
+    }
+
+    /* ── DIVIDER & REGISTER LINK ────────────────── */
+    .login-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 22px 0 18px;
+    }
+    .login-divider::before,
+    .login-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #C5E8E4;
+    }
+    .login-divider span {
+        font-size: 0.75rem;
+        color: #7FA9A4;
+        font-weight: 500;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .register-link {
+        text-align: center;
+        font-size: 0.85rem;
+        color: #3A5C58;
+    }
+    .register-link a {
+        color: #0A7C6E;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .register-link a:hover { color: #065A50; text-decoration: underline; }
+
+    /* ── BADGE ──────────────────────────────────── */
+    .login-badge {
+        text-align: center;
+        margin-top: 22px;
+    }
+    .login-badge span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.25);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 6px 16px;
+        border-radius: 20px;
+        backdrop-filter: blur(6px);
+    }
+    .login-badge span i { color: #00C9B1; }
+
+    /* ── ANIMATION ──────────────────────────────── */
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(28px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 480px) {
+        .login-card-body { padding: 28px 22px 28px; }
+        .login-header h2 { font-size: 1.35rem; }
+        .login-actions { flex-direction: column; }
+    }
+</style>
+{% endblock %}
+
+{% block contents %}
+<section class="login-section">
+    <div class="login-deco"></div>
+
+    <div class="login-wrapper">
+
+        <!-- Card -->
+        <div class="login-card">
+            <div class="login-card-accent"></div>
+            <div class="login-card-body">
+
+                <!-- Header -->
+                <div class="login-header">
+                    <div class="login-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to access your dementia prediction dashboard</p>
+                </div>
+
+                <!-- Form — action, method, names unchanged -->
+                <form action="{% url 'UserLoginCheck' %}" method="POST">
+                    {% csrf_token %}
+
+                    <div class="field-group">
+                        <label class="field-label" for="loginid">Login ID</label>
+                        <div class="field-wrap">
+                            <i class="fas fa-user field-icon"></i>
+                            <input
+                                type="text"
+                                id="loginid"
+                                name="loginid"
+                                required
+                                placeholder="Enter your Login ID"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="pswd">Password</label>
+                        <div class="field-wrap">
+                            <i class="fas fa-lock field-icon"></i>
+                            <input
+                                type="password"
+                                id="pswd"
+                                name="pswd"
+                                required
+                                placeholder="Enter your password"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="login-message {% if 'error' in message.tags or 'invalid' in message|lower %}error{% endif %}">
+                                <i class="fas {% if 'error' in message.tags %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Buttons -->
+                    <div class="login-actions">
+                        <button class="btn-login btn-login-primary" type="submit">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <button class="btn-login btn-login-reset" type="reset">
+                            <i class="fas fa-redo-alt"></i> Reset
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Register link -->
+                <div class="login-divider"><span>New here?</span></div>
+                <div class="register-link">
+                    Don't have an account?
+                    <a href="{% url 'UserRegister' %}">Create one free &rarr;</a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Floating badge below card -->
+        <div class="login-badge">
+            <span>
+                <i class="fas fa-shield-alt"></i>
+                Secured by DementiaPredict<strong>ML</strong> &nbsp;|&nbsp; OASIS-2 Dataset
+            </span>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

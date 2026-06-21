@@ -1,0 +1,338 @@
+{% extends 'users/userbase.html' %}
+
+{% block extra_head %}
+<!-- DataTables CSS - exact same version as original -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+
+<style>
+    /* ── PAGE WRAPPER ─────────────────────────── */
+    .dataset-page {
+        min-height: 90vh;
+        background: #F4FAFA;
+        padding: 40px 32px 60px;
+    }
+
+    /* ── PAGE HEADER ─────────────────────────── */
+    .ds-page-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+    .ds-header-left .sec-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #0A7C6E;
+        background: #E0F7F5;
+        padding: 4px 13px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+    }
+    .ds-header-left h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: #043A34;
+        margin: 0 0 5px;
+    }
+    .ds-header-left h2 span { color: #0A7C6E; }
+    .ds-header-left p {
+        font-size: 0.83rem;
+        color: #7FA9A4;
+        margin: 0;
+    }
+
+    /* Stat badges */
+    .ds-badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .ds-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        border: 1px solid #C5E8E4;
+        border-radius: 10px;
+        padding: 9px 16px;
+    }
+    .ds-badge .db-icon {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        background: #E0F7F5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .ds-badge .db-icon i { color: #0A7C6E; font-size: 0.82rem; }
+    .ds-badge .db-val {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #043A34;
+        line-height: 1;
+    }
+    .ds-badge .db-lbl {
+        font-size: 0.68rem;
+        color: #7FA9A4;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 1px;
+    }
+
+    /* ── TABLE CARD ──────────────────────────── */
+    .ds-table-card {
+        background: white;
+        border: 1px solid #C5E8E4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(10,124,110,0.07);
+    }
+    .ds-table-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 14px 22px;
+        border-bottom: 1px solid #E0F7F5;
+        background: #F4FAFA;
+    }
+    .ds-table-card-header .th-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #0A7C6E;
+    }
+    .ds-source-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #E0F7F5;
+        border: 1px solid #C5E8E4;
+        color: #065A50;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+    }
+
+    /* Table container — scroll on small screens */
+    .ds-table-body {
+        padding: 18px 20px 16px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+
+    /* ── STYLE THE df.to_html() TABLE ───────── */
+    /* Target the generated table by its class */
+    .ds-table-body table.dataframe,
+    .ds-table-body table.table-striped {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.855rem;
+        color: #3A5C58;
+    }
+
+    /* Header */
+    .ds-table-body table.dataframe thead th,
+    .ds-table-body table.table-striped thead th {
+        background-color: #0A7C6E !important;
+        color: white !important;
+        font-weight: 600 !important;
+        padding: 11px 14px !important;
+        border: 1px solid #0A7C6E !important;
+        white-space: nowrap;
+        text-align: left;
+    }
+
+    /* Body rows */
+    .ds-table-body table.dataframe tbody tr td,
+    .ds-table-body table.table-striped tbody tr td {
+        padding: 9px 14px !important;
+        border: 1px solid #E0F7F5 !important;
+        color: #3A5C58 !important;
+        vertical-align: middle;
+    }
+    .ds-table-body table.dataframe tbody tr:hover td,
+    .ds-table-body table.table-striped tbody tr:hover td {
+        background-color: #F0FDFB !important;
+    }
+
+    /* DataTables controls */
+    .dataTables_wrapper {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.875rem;
+        color: #3A5C58;
+        padding: 0;
+    }
+    .dataTables_filter label,
+    .dataTables_length label {
+        font-size: 0.82rem;
+        color: #3A5C58;
+        font-weight: 500;
+    }
+    .dataTables_filter input {
+        border: 1.5px solid #C5E8E4 !important;
+        border-radius: 9px !important;
+        padding: 6px 12px !important;
+        font-family: 'DM Sans', sans-serif !important;
+        font-size: 0.84rem !important;
+        outline: none !important;
+        margin-left: 6px !important;
+        transition: border-color 0.2s !important;
+    }
+    .dataTables_filter input:focus {
+        border-color: #0A7C6E !important;
+        box-shadow: 0 0 0 3px rgba(10,124,110,0.10) !important;
+    }
+    .dataTables_length select {
+        border: 1.5px solid #C5E8E4 !important;
+        border-radius: 8px !important;
+        padding: 5px 8px !important;
+        font-family: 'DM Sans', sans-serif !important;
+        font-size: 0.82rem !important;
+        margin: 0 5px !important;
+        outline: none !important;
+    }
+    .dataTables_info {
+        font-size: 0.8rem !important;
+        color: #7FA9A4 !important;
+        padding-top: 10px !important;
+    }
+
+    /* Pagination */
+    .dataTables_paginate .paginate_button {
+        border-radius: 8px !important;
+        font-size: 0.82rem !important;
+        padding: 5px 11px !important;
+        margin: 0 2px !important;
+        border: 1px solid #C5E8E4 !important;
+        color: #3A5C58 !important;
+        background: white !important;
+        transition: all 0.2s !important;
+    }
+    .dataTables_paginate .paginate_button:hover {
+        background: #E0F7F5 !important;
+        color: #0A7C6E !important;
+        border-color: #0A7C6E !important;
+    }
+    .dataTables_paginate .paginate_button.current,
+    .dataTables_paginate .paginate_button.current:hover {
+        background: linear-gradient(135deg, #0A7C6E, #00C9B1) !important;
+        color: white !important;
+        border-color: transparent !important;
+        box-shadow: 0 2px 8px rgba(10,124,110,0.22) !important;
+    }
+    .dataTables_paginate .paginate_button.disabled,
+    .dataTables_paginate .paginate_button.disabled:hover {
+        opacity: 0.4 !important;
+        background: white !important;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 900px) {
+        .dataset-page { padding: 28px 16px 40px; }
+        .ds-page-header { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 600px) {
+        .ds-header-left h2 { font-size: 1.35rem; }
+        .ds-table-body { padding: 12px 10px; }
+        .dataTables_filter,
+        .dataTables_length { float: none !important; display: block; margin-bottom: 8px; }
+        .dataTables_filter input {
+            width: 100% !important;
+            margin-left: 0 !important;
+            display: block;
+            margin-top: 4px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block contents %}
+
+<!-- ✅ jQuery + DataTables — exact same CDN as original -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<section class="dataset-page">
+    <div class="container-fluid">
+
+        <!-- Page Header -->
+        <div class="ds-page-header">
+            <div class="ds-header-left">
+                <span class="sec-label"><i class="fas fa-database"></i> OASIS-2 Dataset</span>
+                <h2>Dataset <span>View</span></h2>
+                <p>Longitudinal MRI records used to train and evaluate the dementia prediction models</p>
+            </div>
+            <div class="ds-badges">
+                <div class="ds-badge">
+                    <div class="db-icon"><i class="fas fa-table"></i></div>
+                    <div>
+                        <div class="db-val">1210</div>
+                        <div class="db-lbl">Records</div>
+                    </div>
+                </div>
+                <div class="ds-badge">
+                    <div class="db-icon"><i class="fas fa-columns"></i></div>
+                    <div>
+                        <div class="db-val">12</div>
+                        <div class="db-lbl">Columns</div>
+                    </div>
+                </div>
+                <div class="ds-badge">
+                    <div class="db-icon"><i class="fas fa-tag"></i></div>
+                    <div>
+                        <div class="db-val">3</div>
+                        <div class="db-lbl">Classes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="ds-table-card">
+            <div class="ds-table-card-header">
+                <div class="th-title">
+                    <i class="fas fa-table"></i> OASIS-2 MRI Records
+                </div>
+                <span class="ds-source-tag">
+                    <i class="fas fa-external-link-alt"></i> Source: oasis-brains.org
+                </span>
+            </div>
+
+            <!-- ✅ EXACT same as original — {{ data|safe }} untouched -->
+            <div class="ds-table-body">
+                {{ data|safe }}
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ✅ DataTable init placed AFTER the table HTML is in the DOM -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('table').DataTable({
+            "pageLength": 50
+        });
+    });
+</script>
+
+{% endblock %}

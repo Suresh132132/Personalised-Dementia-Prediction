@@ -1,0 +1,434 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personalized Dementia Prediction Using Machine Learning</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 4 -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary:       #0A7C6E;
+            --primary-light: #13A899;
+            --primary-dark:  #065A50;
+            --accent:        #00C9B1;
+            --accent-soft:   #E0F7F5;
+            --white:         #FFFFFF;
+            --off-white:     #F4FAFA;
+            --text-dark:     #0D2B27;
+            --text-mid:      #3A5C58;
+            --text-light:    #7FA9A4;
+            --border:        #C5E8E4;
+            --shadow:        0 4px 24px rgba(10,124,110,0.10);
+            --navbar-h:      66px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--off-white);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOP BAR ───────────────────────────── */
+        .user-topbar {
+            background: var(--primary-dark);
+            color: rgba(255,255,255,0.75);
+            font-size: 0.76rem;
+            letter-spacing: 0.04em;
+            padding: 5px 0;
+        }
+        .user-topbar .inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 32px;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .user-topbar .badge-user {
+            background: var(--accent);
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-size: 0.7rem;
+            border-radius: 20px;
+            padding: 2px 12px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* ── NAVBAR ────────────────────────────── */
+        .user-navbar {
+            background: var(--white);
+            border-bottom: 2px solid var(--border);
+            height: var(--navbar-h);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.3s;
+        }
+        .user-navbar.scrolled {
+            box-shadow: 0 6px 30px rgba(10,124,110,0.14);
+        }
+
+        /* Brand */
+        .user-brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            text-decoration: none !important;
+        }
+        .brand-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 12px rgba(10,124,110,0.25);
+            flex-shrink: 0;
+        }
+        .brand-icon i { color: white; font-size: 1.05rem; }
+
+        .brand-texts .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            display: block;
+            line-height: 1.2;
+        }
+        .brand-texts .brand-title span { color: var(--accent); }
+        .brand-texts .brand-sub {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* Nav links */
+        .user-nav {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            list-style: none;
+            margin: 0; padding: 0;
+        }
+        .user-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-mid);
+            text-decoration: none;
+            padding: 7px 13px;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+            white-space: nowrap;
+        }
+        .user-nav li a i { font-size: 0.78rem; }
+        .user-nav li a:hover,
+        .user-nav li a.active {
+            background: var(--accent-soft);
+            color: var(--primary);
+        }
+        /* Prediction CTA */
+        .user-nav li.predict-link a {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-weight: 600;
+        }
+        .user-nav li.predict-link a:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            box-shadow: 0 4px 14px rgba(10,124,110,0.28);
+            transform: translateY(-1px);
+        }
+        /* Logout */
+        .user-nav li.logout-link a {
+            background: #FFF0EE;
+            color: #C0392B;
+            border: 1px solid #FADADD;
+        }
+        .user-nav li.logout-link a:hover {
+            background: #FADADD;
+            color: #922B21;
+        }
+
+        /* Mobile toggler */
+        .user-toggler {
+            display: none;
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        /* Nav collapse */
+        .nav-collapse {
+            display: flex;
+            align-items: center;
+        }
+
+        /* ── MAIN ──────────────────────────────── */
+        main { flex: 1; }
+
+        /* ── FOOTER ────────────────────────────── */
+        .user-footer {
+            background: var(--primary-dark);
+            color: rgba(255,255,255,0.45);
+            padding: 32px 32px 18px;
+            margin-top: auto;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 36px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 16px;
+        }
+        .footer-brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            color: white;
+            margin-bottom: 8px;
+        }
+        .footer-brand-title span { color: var(--accent); }
+        .footer-brand p {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.7;
+        }
+        .footer-col h6 {
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 7px; }
+        .footer-col ul li a {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.82rem;
+            transition: color 0.2s;
+        }
+        .footer-col ul li a:hover { color: var(--accent); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.76rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .footer-bottom .acc-badge {
+            background: rgba(0,201,177,0.14);
+            border: 1px solid rgba(0,201,177,0.28);
+            color: var(--accent);
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* Back to top */
+        .back-top {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(10,124,110,0.30);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 999;
+        }
+        .back-top.show { opacity: 1; }
+        .back-top:hover { transform: translateY(-3px); color: white; }
+
+        /* ── RESPONSIVE ────────────────────────── */
+        @media (max-width: 991px) {
+            .user-toggler { display: block; }
+            .nav-collapse {
+                display: none;
+                position: absolute;
+                top: var(--navbar-h);
+                left: 0; right: 0;
+                background: white;
+                border-bottom: 2px solid var(--border);
+                padding: 12px 20px 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+                z-index: 999;
+            }
+            .nav-collapse.open { display: flex; }
+            .user-nav { flex-direction: column; width: 100%; gap: 3px; }
+            .user-nav li { width: 100%; }
+            .user-nav li a { width: 100%; }
+        }
+        @media (max-width: 600px) {
+            .user-navbar { padding: 0 16px; }
+            .user-topbar .inner { padding: 0 16px; }
+            .user-footer { padding: 24px 16px 14px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Top Bar Removed -->
+
+    <!-- Navbar -->
+    <nav class="user-navbar" id="userNav">
+        <a class="user-brand" href="{% url 'index' %}">
+            <div class="brand-icon"><i class="fas fa-brain"></i></div>
+            <div class="brand-texts">
+                <span class="brand-title">DementiaPredict<span>ML</span></span>
+                <span class="brand-sub">User Dashboard</span>
+            </div>
+        </a>
+
+        <button class="user-toggler" onclick="toggleUserNav()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="nav-collapse" id="userNavCollapse">
+            <ul class="user-nav">
+                <li>
+                    <a href="{% url 'UserHome' %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'DatasetView' %}">
+                        <i class="fas fa-database"></i> Dataset
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'Training' %}">
+                        <i class="fas fa-robot"></i> Training
+                    </a>
+                </li>
+                <li class="predict-link">
+                    <a href="{% url 'prediction' %}">
+                        <i class="fas fa-brain"></i> Prediction
+                    </a>
+                </li>
+                <li class="logout-link">
+                    <a href="{% url 'index' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block contents %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="user-footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="footer-brand-title">DementiaPredict<span>ML</span></div>
+                <p>A personalised dementia prediction platform using machine learning — trained on the OASIS-2 longitudinal MRI dataset.</p>
+            </div>
+            <div class="footer-col">
+                <h6>Navigation</h6>
+                <ul>
+                    <li><a href="{% url 'UserHome' %}">Home</a></li>
+                    <li><a href="{% url 'DatasetView' %}">Dataset View</a></li>
+                    <li><a href="{% url 'Training' %}">Model Training</a></li>
+                    <li><a href="{% url 'prediction' %}">Prediction</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h6>ML Models</h6>
+                <ul>
+                    <li><a href="#">Random Forest — 70%</a></li>
+                    <li><a href="#">SVM — 69%</a></li>
+                    <li><a href="#">Logistic Regression — 68%</a></li>
+                    <li><a href="#">OASIS-2 Dataset</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2025 Dementia Prediction Platform. All rights reserved.</span>
+            <span class="acc-badge"><i class="fas fa-check-circle" style="margin-right:5px;"></i>Best Model: 70% (Random Forest)</span>
+        </div>
+    </footer>
+
+    <!-- Back to top -->
+    <a href="#" class="back-top" id="backTop"><i class="fas fa-chevron-up"></i></a>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Sticky nav shadow
+        window.addEventListener('scroll', () => {
+            document.getElementById('userNav').classList.toggle('scrolled', window.scrollY > 10);
+            document.getElementById('backTop').classList.toggle('show', window.scrollY > 200);
+        });
+
+        // Mobile nav toggle
+        function toggleUserNav() {
+            document.getElementById('userNavCollapse').classList.toggle('open');
+        }
+
+        // Active link
+        const links = document.querySelectorAll('.user-nav li a');
+        const path = window.location.pathname;
+        links.forEach(link => {
+            if (link.getAttribute('href') && path.includes(link.getAttribute('href'))) {
+                link.classList.add('active');
+            }
+        });
+
+        // Smooth scroll to top
+        document.getElementById('backTop').addEventListener('click', e => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,209 @@
+{% extends 'admins/adminbase.html' %}
+
+{% block extra_head %}
+<style>
+    /* ── EDIT PAGE ────────────────────────── */
+    .edit-page {
+        min-height: 80vh;
+        background: #F4FAFA;
+        padding: 48px 32px 60px;
+    }
+
+    .edit-header {
+        text-align: center;
+        margin-bottom: 36px;
+    }
+    .edit-header .sec-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #0A7C6E;
+        background: #E0F7F5;
+        padding: 4px 13px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+    }
+    .edit-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+        font-weight: 700;
+        color: #043A34;
+        margin-bottom: 8px;
+    }
+    .edit-header h2 span { color: #0A7C6E; }
+    .edit-header p {
+        font-size: 0.9rem;
+        color: #7FA9A4;
+        margin: 0;
+    }
+
+    .edit-card {
+        background: white;
+        border: 1px solid #C5E8E4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(10,124,110,0.07);
+        max-width: 650px;
+        margin: 0 auto;
+    }
+    .edit-card-accent {
+        height: 5px;
+        background: linear-gradient(90deg, #065A50, #0A7C6E, #00C9B1);
+    }
+    .edit-card-body {
+        padding: 36px 40px;
+    }
+
+    .field-group { margin-bottom: 18px; }
+    .field-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #3A5C58;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 7px;
+        display: block;
+    }
+    .field-wrap { position: relative; }
+    .field-wrap .field-icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0A7C6E;
+        font-size: 0.85rem;
+        pointer-events: none;
+    }
+    .field-wrap input {
+        width: 100%;
+        padding: 11px 13px 11px 38px;
+        border: 1.5px solid #C5E8E4;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        color: #0D2B27;
+        background: #F4FAFA;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        outline: none;
+    }
+    .field-wrap input:focus {
+        border-color: #0A7C6E;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(10,124,110,0.10);
+    }
+
+    .btn-save {
+        width: 100%;
+        padding: 13px 20px;
+        background: linear-gradient(135deg, #0A7C6E, #00C9B1);
+        color: white;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.25s;
+        box-shadow: 0 4px 14px rgba(10,124,110,0.28);
+        margin-top: 10px;
+    }
+    .btn-save:hover {
+        background: linear-gradient(135deg, #065A50, #0A7C6E);
+        box-shadow: 0 6px 20px rgba(10,124,110,0.38);
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}
+
+{% block contents %}
+<section class="edit-page">
+    <div class="container-fluid">
+        <div class="edit-header">
+            <span class="sec-label"><i class="fas fa-user-edit"></i> User Management</span>
+            <h2>Edit <span>User Details</span></h2>
+            <p>Modify the records for {{ user.name }} (ID: {{ user.loginid }})</p>
+        </div>
+
+        <div class="edit-card">
+            <div class="edit-card-accent"></div>
+            <div class="edit-card-body">
+                <form method="POST" action="/EditUser/">
+                    {% csrf_token %}
+                    <input type="hidden" name="uid" value="{{ user.id }}">
+
+                    <div class="field-group">
+                        <label class="field-label">Full Name</label>
+                        <div class="field-wrap">
+                            <i class="fas fa-user field-icon"></i>
+                            <input type="text" name="name" value="{{ user.name }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">Mobile</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-phone field-icon"></i>
+                                    <input type="text" name="mobile" value="{{ user.mobile }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">Email Address</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-envelope field-icon"></i>
+                                    <input type="email" name="email" value="{{ user.email }}" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="field-group">
+                                <label class="field-label">Locality</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-map-marker-alt field-icon"></i>
+                                    <input type="text" name="locality" value="{{ user.locality }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">City</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-city field-icon"></i>
+                                    <input type="text" name="city" value="{{ user.city }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label">State</label>
+                                <div class="field-wrap">
+                                    <i class="fas fa-map field-icon"></i>
+                                    <input type="text" name="state" value="{{ user.state }}" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
